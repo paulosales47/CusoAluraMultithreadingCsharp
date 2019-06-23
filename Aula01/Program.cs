@@ -17,7 +17,8 @@ namespace Aula01
 
             //Executar100TarefasSerial(); //10163
             //Executar100TarefasParalelo(); //934
-            ExecutarColecaoParalelo(); //1058
+            //ExecutarColecaoParalelo(); //1058
+            FinalizandoLoop();
 
             watch.Stop();
             Console.WriteLine(watch.ElapsedMilliseconds);
@@ -78,5 +79,20 @@ namespace Aula01
             var itens = Enumerable.Range(0, 100);
             Parallel.ForEach(itens, (item) => Processar(item));
         }
+
+        public static void FinalizandoLoop()
+        {
+            ParallelLoopResult loop = Parallel.For(0, 100, (int i, ParallelLoopState state) => 
+            {
+                if (i == 75)
+                    state.Break();
+                
+                Processar(i);
+            });
+
+            Console.WriteLine($"Processado sem interrupção: {loop.IsCompleted}");
+            Console.WriteLine($"Itens processado: {loop.LowestBreakIteration}");
+        }
+
     }
 }
