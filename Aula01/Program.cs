@@ -12,7 +12,10 @@ namespace Aula01
             Stopwatch watch = Stopwatch.StartNew();
 
             //Serial(); //10020
-            Paralelo(); //5092
+            //Paralelo(); //5092
+
+            //Executar100TarefasSerial(); //10163
+            //Executar100TarefasParalelo(); //934
 
             watch.Stop();
             Console.WriteLine(watch.ElapsedMilliseconds);
@@ -43,6 +46,29 @@ namespace Aula01
         {
             Console.WriteLine("Executando tarefa 2...");
             Thread.Sleep(5000);
+        }
+
+        public static void Executar100TarefasSerial()
+        {
+            Console.WriteLine("Processando 100 itens em série");
+            for (int i = 0; i < 100; i++)
+            {
+                Processar(i);
+            }
+
+        }
+
+        public static void Executar100TarefasParalelo()
+        {
+            Console.WriteLine("Processando 100 itens em paralelo");
+            Parallel.For(0, 100, (i) => Processar(i));
+        }
+
+        public static void Processar(object item)
+        {
+            Console.WriteLine($"Processando item: {item}");
+            Thread.Sleep(100);
+            Console.WriteLine($"Finalizando processamento do item: {item}");
         }
     }
 }
