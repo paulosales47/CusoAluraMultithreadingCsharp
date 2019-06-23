@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,6 +17,7 @@ namespace Aula01
 
             //Executar100TarefasSerial(); //10163
             //Executar100TarefasParalelo(); //934
+            ExecutarColecaoParalelo(); //1058
 
             watch.Stop();
             Console.WriteLine(watch.ElapsedMilliseconds);
@@ -69,6 +71,12 @@ namespace Aula01
             Console.WriteLine($"Processando item: {item}");
             Thread.Sleep(100);
             Console.WriteLine($"Finalizando processamento do item: {item}");
+        }
+
+        public static void ExecutarColecaoParalelo()
+        {
+            var itens = Enumerable.Range(0, 100);
+            Parallel.ForEach(itens, (item) => Processar(item));
         }
     }
 }
