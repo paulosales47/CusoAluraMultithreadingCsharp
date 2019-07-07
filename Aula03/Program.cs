@@ -24,31 +24,47 @@ namespace Aula03
             //Console.WriteLine($"Resultado da soma {tarefa3.Result}");
 
             //Corrida();
-            Task primeiraTarefa = Task.Run(() => PrimeiraTarefa());
-            Task segundaTarefa = new Task(() => SegundaTarefa());
-            Task terceiraTarefa = new Task(() => TerceiraTarefa());
+
+            //Task primeiraTarefa = Task.Run(() => PrimeiraTarefa());
+            //Task segundaTarefa = new Task(() => SegundaTarefa());
+            //Task terceiraTarefa = new Task(() => TerceiraTarefa());
 
 
-            primeiraTarefa.ContinueWith((tarefaAnterior) => segundaTarefa.Start(), 
-                TaskContinuationOptions.NotOnFaulted);
+            //primeiraTarefa.ContinueWith((tarefaAnterior) => segundaTarefa.Start(), 
+            //    TaskContinuationOptions.NotOnFaulted);
 
-            segundaTarefa.ContinueWith((tarefaAnterior) => terceiraTarefa.Start(),
-                TaskContinuationOptions.NotOnFaulted);
+            //segundaTarefa.ContinueWith((tarefaAnterior) => terceiraTarefa.Start(),
+            //    TaskContinuationOptions.NotOnFaulted);
 
-            //AÇÕES EXECUTADAS SOMENTE EM CASO DE ERRO
-            primeiraTarefa.ContinueWith((tarefaAnterior) => ExibirErroTarefa(tarefaAnterior),
-                TaskContinuationOptions.OnlyOnFaulted);
+            ////AÇÕES EXECUTADAS SOMENTE EM CASO DE ERRO
+            //primeiraTarefa.ContinueWith((tarefaAnterior) => ExibirErroTarefa(tarefaAnterior),
+            //    TaskContinuationOptions.OnlyOnFaulted);
 
-            segundaTarefa.ContinueWith((tarefaAnterior) => ExibirErroTarefa(tarefaAnterior),
-                TaskContinuationOptions.OnlyOnFaulted);
+            //segundaTarefa.ContinueWith((tarefaAnterior) => ExibirErroTarefa(tarefaAnterior),
+            //    TaskContinuationOptions.OnlyOnFaulted);
+
+            //terceiraTarefa.Wait();
 
 
+            Task tarefaMae = Task.Factory.StartNew(() =>
+            {
+                Console.WriteLine("Tarefa mãe inicio");
 
-            terceiraTarefa.Wait();
+                for (int i = 0; i < 10; i++)
+                {
+                    int IdTarefa = i;
+                    Task tarefaFilha = Task.Factory.StartNew((Id) => 
+                    ExecutarTarefa(IdTarefa),
+                    IdTarefa,
+                    TaskCreationOptions.AttachedToParent);
+                }
+            });
 
+            tarefaMae.Wait();
+            Console.WriteLine("Tarefa mãe terminou");
 
             watch.Stop();
-            Console.WriteLine($"Tempo total: {watch.ElapsedMilliseconds}");
+            Console.WriteLine($"Tempo total: {watch.ElapsedMilliseconds}ms");
 
         }
 
@@ -97,9 +113,9 @@ namespace Aula03
 
         public static void ExecutarTarefa(int idTarefa)
         {
-            Console.WriteLine($"Inicio da tarefa {idTarefa}");
-            Thread.Sleep(2000);
-            Console.WriteLine($"Fim da tarefa {idTarefa}");
+            Console.WriteLine($"\tInicio da tarefa {idTarefa}");
+            Thread.Sleep(1000);
+            Console.WriteLine($"\tFim da tarefa {idTarefa}");
         }
 
         public static int ExecutarTarefaSoma(int arg1, int arg2)
