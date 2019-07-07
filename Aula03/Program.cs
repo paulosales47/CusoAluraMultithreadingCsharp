@@ -29,16 +29,39 @@ namespace Aula03
             Task terceiraTarefa = new Task(() => TerceiraTarefa());
 
 
-            primeiraTarefa.ContinueWith((tarefaAnterior) => segundaTarefa.Start());
-            segundaTarefa.ContinueWith((tarefaAnterior) => terceiraTarefa.Start());
+            primeiraTarefa.ContinueWith((tarefaAnterior) => segundaTarefa.Start(), 
+                TaskContinuationOptions.NotOnFaulted);
+
+            segundaTarefa.ContinueWith((tarefaAnterior) => terceiraTarefa.Start(),
+                TaskContinuationOptions.NotOnFaulted);
+
+            //AÇÕES EXECUTADAS SOMENTE EM CASO DE ERRO
+            primeiraTarefa.ContinueWith((tarefaAnterior) => ExibirErroTarefa(tarefaAnterior),
+                TaskContinuationOptions.OnlyOnFaulted);
+
+            segundaTarefa.ContinueWith((tarefaAnterior) => ExibirErroTarefa(tarefaAnterior),
+                TaskContinuationOptions.OnlyOnFaulted);
 
 
-            segundaTarefa.Wait();
+
+            terceiraTarefa.Wait();
 
 
             watch.Stop();
             Console.WriteLine($"Tempo total: {watch.ElapsedMilliseconds}");
 
+        }
+
+        private static void ExibirErroTarefa(Task tarefaAnterior)
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            Console.WriteLine($"Erro ocorrido na tarefa:");
+            foreach (var erro in tarefaAnterior.Exception.InnerExceptions)
+            {
+                Console.WriteLine(erro);
+            }
         }
 
         private static void TerceiraTarefa()
@@ -49,7 +72,7 @@ namespace Aula03
         private static void SegundaTarefa()
         {
             Console.WriteLine("Segunda tarefa");
-            throw new ApplicationException("Erro ao executar segudna tarefa");
+            throw new ApplicationException("Erro ao executar segunda tarefa");
         }
 
         private static void PrimeiraTarefa()
