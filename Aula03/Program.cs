@@ -23,13 +23,39 @@ namespace Aula03
             //Task<int> tarefa3 = Task.Run(() => ExecutarTarefaSoma(1, 3));
             //Console.WriteLine($"Resultado da soma {tarefa3.Result}");
 
-            Corrida();
+            //Corrida();
+            Task primeiraTarefa = Task.Run(() => PrimeiraTarefa());
+            Task segundaTarefa = new Task(() => SegundaTarefa());
+            Task terceiraTarefa = new Task(() => TerceiraTarefa());
+
+
+            primeiraTarefa.ContinueWith((tarefaAnterior) => segundaTarefa.Start());
+            segundaTarefa.ContinueWith((tarefaAnterior) => terceiraTarefa.Start());
+
+
+            segundaTarefa.Wait();
+
 
             watch.Stop();
             Console.WriteLine($"Tempo total: {watch.ElapsedMilliseconds}");
-            
+
         }
 
+        private static void TerceiraTarefa()
+        {
+            Console.WriteLine("Terceira tarefa");
+        }
+
+        private static void SegundaTarefa()
+        {
+            Console.WriteLine("Segunda tarefa");
+            throw new ApplicationException("Erro ao executar segudna tarefa");
+        }
+
+        private static void PrimeiraTarefa()
+        {
+            Console.WriteLine("Primeira tarefa");
+        }
 
         public static void Corrida()
         {
